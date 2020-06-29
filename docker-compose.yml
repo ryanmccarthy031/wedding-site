@@ -1,0 +1,58 @@
+version: "3.7"
+
+services:
+    backend:
+        image: strapi/strapi
+        container_name: backend
+        restart: unless-stopped
+        env_file: .env
+        environment:
+            DATABASE_CLIENT: ${DATABASE_CLIENT}
+            DATABASE_NAME: ${DATABASE_NAME}
+            DATABASE_HOST: ${DATABASE_HOST}
+            DATABASE_PORT: ${DATABASE_PORT}
+            DATABASE_USERNAME: ${DATABASE_USERNAME}
+            DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+        networks:
+            - wedding-app-network
+        volumes:
+            - ./backend:/srv/app
+        ports:
+            - "1337:1337"
+
+    db:
+        image: mongo:4.2
+        container_name: db
+        restart: unless-stopped
+        env_file: .env
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+        networks:
+            - wedding-app-network
+        volumes:
+            - ./storage:/data/db
+        ports:
+            - "27017:27017"
+    frontend:
+        image: node:10.15.1
+        command: yarn run nuxt
+        env_file: .env
+        environment:
+            BASE_NAME: ${BASE_NAME}
+            PROTOCOL: ${PROTOCOL}
+            BACKEND_PORT: ${BACKEND_PORT}
+            HOST: 0.0.0.0
+        networks:
+            - wedding-app-network
+        volumes:
+            - ./frontend:/usr/src/app
+        working_dir: /usr/src/app
+        ports:
+            - "5000:3000"
+networks:
+    wedding-app-network:
+        driver: bridge
+
+volumes:
+    storage:
