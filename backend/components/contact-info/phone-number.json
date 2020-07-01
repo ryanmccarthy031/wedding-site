@@ -1,0 +1,13 @@
+{
+  "collectionName": "components_contact_info_phone_numbers",
+  "info": {
+    "name": "Phone Number",
+    "icon": "phone"
+  },
+  "options": {},
+  "attributes": {
+    "phone_number": {
+      "type": "integer"
+    }
+  }
+}

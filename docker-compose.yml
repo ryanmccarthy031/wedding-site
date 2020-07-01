@@ -37,6 +37,7 @@ services:
     frontend:
         image: node:10.15.1
         command: yarn run nuxt
+        restart: unless-stopped
         env_file: .env
         environment:
             BASE_NAME: ${BASE_NAME}

@@ -2,6 +2,7 @@ import axios from 'axios'
 
 export const state = () => ({
     pages: [],
+    text: {},
 })
 
 export const getters = {}
@@ -15,12 +16,20 @@ export const mutations = {
 }
 
 export const actions = {
-  async nuxtServerInit ({ commit }, { req }) {
-    const { data } = await axios.get(`${process.env.baseUrl}/pages`)
-    // TODO: I need to figure out how to temporarily exclude a page, and how to make a page
-    // viewable only either to some users or with a token
-    const pageList = data.sort((a,b) => a.order - b.order).filter(page=>page.is_included)
+  async nuxtServerInit ({ commit, dispatch }, { req }) {
+    const { data } = await axios.get(`${process.env.baseUrl}/framework`)
+    // TODO: I need to figure out how to make a page viewable only either to some users or with a token
     // TODO: I need some error handling here
-    await commit('add', { entity: 'pages', data: pageList })
+
+    const pages = await dispatch('keyObj', { array: data.pages.filter(page=>page.is_included), key: 'slug' })
+    await commit('add', { entity: 'pages', data: pages })
   },
+  keyObj ({commit}, { array, key }) {
+    const obj = {}
+    for (let i=0; i<array.length; i++) {
+      obj[array[i][key]] = array[i]
+      delete obj[array[i][key]][key]
+    }
+    return obj
+  }
 }

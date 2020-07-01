@@ -1,22 +1,38 @@
 <template>
   <div>
-    <nav class="navbar header has-shadow" role="navigation" aria-label="main navigation">
-      <template>
-        <b-navbar
-          :mobile-burger="true">
-          <template slot="start">
-            <template slot="burger"></template>
-            <b-navbar-item 
-            v-for="(page, index) of $store.state.pages" 
-            :key="`page_${index}`"
-            tag="router-link" 
-            exact-active-class="is-active"
-            :to="{ path: page.slug || '/' }">
-                {{ page.title }}
-            </b-navbar-item>
-          </template>
-        </b-navbar>
-      </template>
+    <nav role="navigation" aria-label="main navigation">
+      <b-navbar type="dark" variant="info">
+        <!--<b-navbar-brand href="#">NavBar</b-navbar-brand>-->
+
+        <b-button v-b-toggle.sidebar-backdrop>
+           <b-icon icon="three-dots-vertical"></b-icon>
+        </b-button>
+        <b-sidebar 
+          aria-label="sidebar navigation"
+          id="sidebar-backdrop" 
+          no-header
+          backdrop 
+          shadow>
+            <b-button v-b-toggle.sidebar-backdrop>
+              <b-icon icon="three-dots-vertical"></b-icon>
+            </b-button>
+            <b-nav-item 
+              v-for="(page, slug) in pages" 
+              :key="`page_${slug}`" 
+              :to="slug==='home'? '/' : slug">
+              {{ page.title }}
+            </b-nav-item>
+        </b-sidebar>
+
+        <b-navbar-nav>
+          <b-nav-item 
+            v-for="(page, slug) in pages" 
+            :key="`page_${slug}`" 
+            :to="slug==='home'? '/' : slug">
+            {{ page.title }}
+          </b-nav-item>
+        </b-navbar-nav>
+      </b-navbar>
     </nav>
 
     <section class="main-content columns">
@@ -27,14 +43,19 @@
     </section>
   </div>
 </template>
-
 <script>
-  import axios from 'axios'
-  export default {
+  import {
+    mapState
+  } from 'vuex'
 
+  export default {
+    computed: {
+      ...mapState([
+        'pages',
+      ])
+    },
     data() {
-      return {
-      }
+      return {}
     },
   }
 </script>

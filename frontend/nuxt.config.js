@@ -17,7 +17,8 @@ export default {
     baseName: process.env.BASE_NAME || 'localhost',
     protocol: process.env.PROTOCOL || 'http://',
     backendPort: process.env.BACKEND_PORT || '80',
-    baseUrl: `${process.env.PROTOCOL || 'http://'}${process.env.BASE_NAME || 'localhost'}:${process.env.BACKEND_PORT||'80'}`
+    baseUrl: `${process.env.PROTOCOL || 'http://'}${process.env.BASE_NAME || 'localhost'}:${process.env.BACKEND_PORT||'80'}`,
+    localUrl: `${process.env.PROTOCOL || 'http://'}${process.env.LOCAL_URL || 'localhost'}:${process.env.LOCAL_PORT||'80'}`
   },
   /*
   ** Headers of the page
@@ -38,7 +39,7 @@ export default {
   ** Global CSS
   */
   css: [
-    '@/assets/styles/main.scss'
+    '@/assets/scss/main.scss'
   ],
   /*
   ** Plugins to load before mounting the App
@@ -60,16 +61,59 @@ export default {
   ** Nuxt.js modules
   */
   modules: [
-    // Doc: https://buefy.github.io/#/documentation
-    'nuxt-buefy',
+    // Doc: https://bootstrap-vue.org/docs#nuxt-js
+    'bootstrap-vue/nuxt',
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
+    // Doc: https://github.com/nuxt-community/modules/tree/master/packages/markdownit
+    '@nuxtjs/markdownit',
+    // Doc: https://www.npmjs.com/package/@nuxtjs/moment
+    '@nuxtjs/moment',
+
+    // '@nuxtjs/proxy',
   ],
+  /*
+  ** Bootstrap-Vue module configuration
+  */
+  bootstrapVue: {
+    icons: true // Install the IconsPlugin (in addition to BootStrapVue plugin
+  },
   /*
   ** Axios module configuration
   ** See https://axios.nuxtjs.org/options
   */
-  axios: {},
+  axios: {
+    proxy: true,
+  },
+  /*
+  ** Proxy
+  */
+ proxy: {
+  '/api/': { 
+    target: `${process.env.PROTOCOL || 'http://'}${process.env.BASE_NAME || 'localhost'}:${process.env.BACKEND_PORT||'80'}`, 
+    pathRewrite: {'^/api': ''} 
+  }
+},
+  /*
+  ** Markdownit module configuration
+  */
+  markdownit: {
+    preset: 'default',
+    linkify: true,
+    breaks: true,
+    injected: true
+  },
+  /*
+  ** Moment module configuration
+  */
+  moment: {
+    timezone: {
+      matchZones: process.env.TIMEZONE || 'America/New_York',
+      startYear: parseInt(process.env.TIMEZONE_START_YEAR, 10) || 2020,
+      endYear: parseInt(process.env.TIMEZONE_END_YEAR, 10) || 2030,
+    },
+    defaultTimezone: 'America/Los_Angeles',
+  },
   /*
   ** Build configuration
   ** See https://nuxtjs.org/api/configuration-build/

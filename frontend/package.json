@@ -11,10 +11,14 @@
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.11.0",
-    "nuxt": "^2.13.0",
-    "nuxt-buefy": "^0.3.31"
+    "@nuxtjs/markdownit": "^1.2.9",
+    "@nuxtjs/proxy": "^2.0.0",
+    "bootstrap-vue": "^2.15.0",
+    "lodash": "^4.17.15",
+    "nuxt": "^2.13.0"
   },
   "devDependencies": {
+    "@nuxtjs/moment": "^1.6.1",
     "node-sass": "^4.14.1",
     "sass-loader": "^8.0.2"
   }

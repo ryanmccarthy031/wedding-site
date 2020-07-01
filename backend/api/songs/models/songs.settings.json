@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "songs",
+  "info": {
+    "name": "Songs"
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true
+  },
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "artist": {
+      "type": "string"
+    },
+    "comments": {
+      "type": "richtext"
+    },
+    "guests": {
+      "via": "songs",
+      "collection": "guests",
+      "dominant": true
+    }
+  }
+}
