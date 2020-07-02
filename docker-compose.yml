@@ -37,6 +37,7 @@ services:
     frontend:
         image: node:10.15.1
         command: yarn run nuxt
+        container_name: frontend
         restart: unless-stopped
         env_file: .env
         environment:
