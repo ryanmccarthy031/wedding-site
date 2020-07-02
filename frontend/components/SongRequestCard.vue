@@ -7,11 +7,14 @@
             <b-row>
                 <b-col>
                     <b-form-input
-                        class="mb-1"
+                        id="song_title"
+                        class="mb-2"
+                        placeholder="Song Title"
                         type="text">
                     </b-form-input>
                     <b-form-input
-                        class="mb-1"
+                        id="artist"
+                        placeholder="Artist"
                         type="text">
                     </b-form-input>
                 </b-col>

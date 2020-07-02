@@ -11,7 +11,7 @@
                     <b-form-input
                         :value="allGuests[index].name"
                         @input="handleNameChange(person.id, $event, index)"
-                        class="mb-1"
+                        class="mb-2"
                         type="text">
                     </b-form-input>
                 </b-col>
