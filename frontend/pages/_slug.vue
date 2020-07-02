@@ -42,14 +42,21 @@
         </b-col>
       </b-row>
     </b-container>
-    <GuestManager
-      v-if="currentPage.is_guest_management" />
+    <div
+      v-if="currentPage.is_guest_management">
+        <GuestQuestions v-if="$store.state.currentGuest.hasOwnProperty('name') && !$store.state.currentGuest.hasOwnProperty('is_coming')" />
+        <GuestManager v-else-if="$store.state.currentGuest.hasOwnProperty('name')" />
+        <GuestFinder v-else />
+
+    </div>
   </section>
 </template>
 
 <script>
 import Address from '~/components/Address'
+import GuestFinder from '~/components/GuestFinder'
 import GuestManager from '~/components/GuestManager'
+import GuestQuestions from '~/components/GuestQuestions'
 import { mapState } from 'vuex'
 
 export default {
@@ -79,7 +86,9 @@ export default {
   },
   components: {
     Address,
+    GuestFinder,
     GuestManager,
+    GuestQuestions,
   }
 }
 </script>

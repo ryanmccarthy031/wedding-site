@@ -1,0 +1,81 @@
+<template>
+    <div>
+        <label for="name">Enter your name as it appears on the invitation</label>
+        <b-form-input 
+            id="name" 
+            v-model="name" 
+            @input="getGuest($event)"
+            class="mb-4"
+            placeholder="Enter your name">
+        </b-form-input>
+        <!-- TODO: Position this spinner inside the input div-->
+        <b-spinner 
+            v-if="searching"
+            type="grow" 
+            label="Spinning"></b-spinner>
+        <b-card v-if="results">
+            <b-card-text
+                 v-if="typeof results === 'object' && results !== null">
+                Are you {{ results.name }}?
+            </b-card-text>
+            <b-card-text v-else>{{ results }}</b-card-text>
+            <div
+                v-if="typeof results === 'object' && results !== null">
+                <b-button 
+                    @click="clearForm()"
+                    variant="outline-danger">
+                    No
+                </b-button>
+                <b-button 
+                    @click="setGuest()"
+                    variant="outline-primary">
+                    Yes
+                </b-button>
+            </div>
+        </b-card>
+    </div>
+</template>
+
+<script>
+    import debounce from 'lodash/debounce'
+    export default {
+        data() {
+            return {
+            name: '',
+            results: null,
+            searching: false,
+            }
+        },
+        methods: {
+            clearForm () {
+                this.name=''
+                this.results=null
+            },
+            // TODO: Bootstrap Vue inputs have a debounce param built in?
+            getGuest: debounce(async function (val) {
+                if (val.length > 2) {
+                    this.searching=true
+                    // TODO: There is a better way to do this with one call to the endpoint, but it will require some custom work on Strapi
+                    // Also, fuzzy matching would be awesome, but I'm not quite sure how to get it.
+                    const { data } = await this.$axios.get(`${process.env.localUrl}/api/guests/count?name_contains=${encodeURIComponent(val)}`)
+                    // TODO: Need some error handling here.
+                    if (data===0) this.results = "No matches found."
+                    else if (data===1) {
+                        const { data } = await this.$axios.get(`${process.env.localUrl}/api/guests?name_contains=${encodeURIComponent(val)}`)
+                        // TODO: Need some error handling here.
+                        this.results = data[0]
+                    } else {
+                        this.results = "Too many results. Keep typing..."
+                    }
+                    this.searching=false
+                }
+            }, 350),
+            setGuest () {
+                this.$store.commit('add', {
+                    entity: 'currentGuest',
+                    data: this.results,
+                })
+            },
+        },
+    }
+</script>

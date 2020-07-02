@@ -2,7 +2,8 @@ import axios from 'axios'
 
 export const state = () => ({
     pages: [],
-    text: {},
+    currentGuest: {},
+    
 })
 
 export const getters = {}
