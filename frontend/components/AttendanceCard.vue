@@ -93,7 +93,14 @@
             },
         },
         methods: {
+            getId () {
+                // A quick unique id generator so that we can manage new guests as though
+                // they have mongodb ids
+                return (m = Math, d = Date, h = 16, s = s => m.floor(s).toString(h)) =>
+                    s(d.now() / 1000) + ' '.repeat(h).replace(/./g, () => s(m.random() * h))
+            },
             async save() {
+
                 this.$store.commit('add', {
                     entity: 'currentGuest',
                     data: this.guest,
@@ -102,7 +109,11 @@
             },
             addAttending() {
                 const attending = Object.values(this.attending)
-                attending.push({name: 'Mystery Guest'})
+                attending.push({
+                    name: 'Mystery Guest',
+                    id: this.getId(),
+                    is_new: true,
+                })
                 this.attending = attending
             },
             removeAttending(id, index) {
