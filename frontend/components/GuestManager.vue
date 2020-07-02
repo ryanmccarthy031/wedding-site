@@ -43,28 +43,6 @@
             </b-col>
         </b-row>
     </b-container>
-<!--
-    <b-card>
-        <div>
-            <b-card-text>
-                Will you be attending the wedding?
-            </b-card-text>    
-            <div>
-                <b-button
-                    @click="setAttending(false)"
-                    variant="outline-danger">
-                    No
-                </b-button>
-                <b-button 
-                    @click="setAttending(true)"
-                    variant="outline-primary">
-
-                    Yes
-                </b-button>
-            </div>
-        </div>
-    </b-card>
--->
 </template>
 
 <script>
@@ -97,16 +75,18 @@
             },
             pronouns () {
                 const we = {
-                    pronoun: "we",
-                    contraction: "we're",
-                    withVerb: "we are",
+                    pronoun: "We",
+                    contraction: "We're",
+                    withVerb: "We are",
                 }
                 const i = {
                     pronoun: "I",
                     contraction: "I'm",
                     withVerb: "I am",
                 }
-                return this.guest.name.includes('&') ? we : i
+                return this.guest.name.includes('&') || 
+                    (this.guest.hasOwnProperty('guests_attending') && 
+                    this.guest.guests_attending.length) ? we : i
             },
         },
 
