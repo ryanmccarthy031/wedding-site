@@ -5,7 +5,8 @@
         <b-form-group label="We'd like to have a little something for everyone at the reception.
             What would you like to hear?">
             <b-row>
-                <b-col>
+                <b-col
+                    md="5">
                     <b-form-input
                         id="song_title"
                         class="mb-2"
@@ -14,12 +15,17 @@
                     </b-form-input>
                     <b-form-input
                         id="artist"
+                        class="mb-2"
                         placeholder="Artist"
                         type="text">
                     </b-form-input>
                 </b-col>
-                <b-col>
+                <b-col
+                    md="7">
                     <!-- TODO: Text editor goes here -->
+                    <no-ssr placeholder="Loading Your Editor...">
+                        <vue-editor :editor-toolbar="customToolbar" v-model="content"></vue-editor>
+                    </no-ssr>
                 </b-col>
             </b-row>
         
@@ -32,7 +38,12 @@
 
     export default {
         data: () => ({
-
+            content: null,
+            customToolbar: [
+                [{ header: [false, 1, 2, 3] }],
+                ["bold", "italic", "underline"],
+                [{ list: "ordered" }, { list: "bullet" }],
+            ]
         }),
         components: {
         },

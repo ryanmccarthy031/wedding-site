@@ -46,6 +46,7 @@ export default {
   ** https://nuxtjs.org/guide/plugins
   */
   plugins: [
+    { src: "~/plugins/vue2-editor", ssr: false }
   ],
   /*
   ** Auto import components
