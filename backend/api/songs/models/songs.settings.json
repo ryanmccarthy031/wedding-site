@@ -15,13 +15,9 @@
     "artist": {
       "type": "string"
     },
-    "comments": {
-      "type": "richtext"
-    },
-    "guests": {
+    "guest": {
       "via": "songs",
-      "collection": "guests",
-      "dominant": true
+      "model": "guests"
     }
   }
 }

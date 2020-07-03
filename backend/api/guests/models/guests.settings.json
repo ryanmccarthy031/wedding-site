@@ -15,13 +15,6 @@
     "is_coming": {
       "type": "boolean"
     },
-    "comments": {
-      "type": "richtext"
-    },
-    "songs": {
-      "collection": "songs",
-      "via": "guests"
-    },
     "address": {
       "type": "component",
       "repeatable": false,
@@ -44,6 +37,16 @@
     },
     "photoAccessToken": {
       "type": "string"
+    },
+    "songs_comment": {
+      "type": "richtext"
+    },
+    "songs": {
+      "collection": "songs",
+      "via": "guest"
+    },
+    "comment": {
+      "type": "richtext"
     }
   }
 }
