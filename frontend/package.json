@@ -16,6 +16,8 @@
     "bootstrap-vue": "^2.15.0",
     "lodash": "^4.17.15",
     "nuxt": "^2.13.0",
+    "nuxt-gmaps": "^1.2.4",
+    "vue-the-mask": "^0.11.1",
     "vue2-editor": "^2.10.2"
   },
   "devDependencies": {

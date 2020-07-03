@@ -70,8 +70,10 @@ export default {
     '@nuxtjs/markdownit',
     // Doc: https://www.npmjs.com/package/@nuxtjs/moment
     '@nuxtjs/moment',
-
-    // '@nuxtjs/proxy',
+    // Doc: https://gitlab.com/broj42/nuxt-gmaps
+    ['nuxt-gmaps',{
+      key: process.env.GMAPS_API_KEY
+    }]
   ],
   /*
   ** Bootstrap-Vue module configuration

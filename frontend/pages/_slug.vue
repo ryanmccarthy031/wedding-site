@@ -10,7 +10,8 @@
     <b-container
       v-if="this.places.length">
       <b-row>
-        <b-col>
+        <b-col
+          md="6">
           <div
             v-for="(place, index) of this.places">
             <h3>
@@ -36,9 +37,11 @@
           </div>
         </b-col>
         <b-col
+          md="6"
           v-if="hasCoords"
           class="column map">
-          TODO: Get Google Maps set up
+          <Map 
+            :places="this.currentPage.places"/>
         </b-col>
       </b-row>
     </b-container>
@@ -57,6 +60,7 @@ import Address from '~/components/Address'
 import GuestFinder from '~/components/GuestFinder'
 import GuestManager from '~/components/GuestManager'
 import GuestQuestions from '~/components/GuestQuestions'
+import Map from '~/components/Map'
 import { mapState } from 'vuex'
 
 export default {
@@ -89,6 +93,7 @@ export default {
     GuestFinder,
     GuestManager,
     GuestQuestions,
+    Map,
   }
 }
 </script>

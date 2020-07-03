@@ -1,48 +1,45 @@
 <template>
     <b-card
-        class="mb-4"
-        title="Guests" >
+        class="mb-4">
+        <b-card-title
+            class="d-flex">
+            Guests
+            <b-button 
+                @click="save()"
+                size="sm"
+                class="ml-auto"
+                variant="outline-success">
+                Save
+            </b-button>
+        </b-card-title>
         <b-form-group label="Who will be attending?">
 
             <b-row
                 v-for="(person, index) of allGuests"
                 :key="`attendant_input_${index}`">
-                <b-col cols="10">
+                <b-input-group class="mb-2">
                     <b-form-input
                         :value="allGuests[index].name"
                         @input="handleNameChange(person.id, $event, index)"
-                        class="mb-2"
                         type="text">
                     </b-form-input>
-                </b-col>
-                <b-col
-                    class="pl-0"
-                    cols="1">
-                        <b-icon
+                    <b-input-group-append>
+                        <b-button 
                             v-if="!allGuests[index].on_invitation"
                             @click="removeAttending(person.id,index)"
-                            variant="danger"
-                            class="align-middle ml-0 pl-0"
-                            shift-v=-4
-                            icon="x-circle"></b-icon>
-                </b-col>
-            </b-row>
-            <b-row
-                class="mt-4 text-center">
-                <b-col>
-                    <b-button 
-                        @click="addAttending()"
-                        pill 
-                        variant="outline-primary">
-                        Add Guest
-                    </b-button>
-                    <b-button 
-                        @click="save()"
-                        pill 
-                        variant="outline-success">
-                        Save
-                    </b-button>
-                </b-col>
+                            variant="outline-danger">
+                            <b-icon
+                                icon="dash"></b-icon>
+                        </b-button>
+                        <b-button 
+                            v-if="allGuests.length-1===index"
+                            @click="addAttending()"
+                            variant="outline-primary">
+                            <b-icon
+                                icon="plus"></b-icon>
+                        </b-button>
+                    </b-input-group-append>
+                </b-input-group>
             </b-row>
         </b-form-group>
 
@@ -105,6 +102,7 @@
                     entity: 'currentGuest',
                     data: this.guest,
                 })
+                // TODO: Error handling here
                 const { data } = await this.$axios.put(`${process.env.localUrl}/api/guests/${this.guest._id}`, this.guest)
             },
             addAttending() {

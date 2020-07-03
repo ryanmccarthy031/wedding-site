@@ -2,7 +2,7 @@
     <b-container>
         <b-row>
             <b-col
-                md="4">
+                md="5">
                 <b-card
                     class="mb-4"
                     title="RSVP">
@@ -16,38 +16,37 @@
                 </b-card>
             </b-col>
             <b-col
-                md="8">
-                <AttendanceCard />
+                md="7">
+                <AttendanceCard 
+                    v-if="guest.is_coming" />
+                <CommentCard 
+                    v-else />
             </b-col>
         </b-row>
-        <b-row>
+        <b-row v-if="guest.is_coming">
             <b-col>
                 <SongRequestCard :guestId="this.guest.id" />
             </b-col>
         </b-row>
-        <b-row>
-            <b-col
-                md="6">
-                <b-card
-                    class="mb-4"
-                    title="Contact Info">
-
-                </b-card>
-            </b-col>
-            <b-col
-                md="6">
-                <b-card
-                    class="mb-4"
-                    title="Comments" >
-                </b-card>
+        <b-row v-if="guest.is_coming">
+            <b-col>
+                <AddressCard />
             </b-col>
         </b-row>
+        <b-row v-if="guest.is_coming">
+            <b-col>
+                <CommentCard />
+            </b-col>
+        </b-row>                       
+
     </b-container>
 </template>
 
 <script>
     import AttendanceCard from '~/components/AttendanceCard'
     import SongRequestCard from '~/components/SongRequestCard'
+    import CommentCard from '~/components/CommentCard'
+    import AddressCard from '~/components/AddressCard'
 
     export default {
         computed: {
@@ -84,7 +83,7 @@
                     contraction: "I'm",
                     withVerb: "I am",
                 }
-                return this.guest.name.includes('&') || 
+                return (this.guest.name.includes('&') || this.guest.name.includes(' and ')) ||
                     (this.guest.hasOwnProperty('guests_attending') && 
                     this.guest.guests_attending.length) ? we : i
             },
@@ -93,6 +92,8 @@
         components: {
             AttendanceCard,
             SongRequestCard,
+            CommentCard,
+            AddressCard,
         }
     }
 </script>

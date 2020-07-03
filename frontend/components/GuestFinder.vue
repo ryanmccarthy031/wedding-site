@@ -52,6 +52,7 @@
                 this.results=null
             },
             // TODO: Bootstrap Vue inputs have a debounce param built in?
+            // TODO: Subsumption problem
             getGuest: debounce(async function (val) {
                 if (val.length > 2) {
                     this.searching=true
@@ -65,6 +66,15 @@
                         // TODO: Need some error handling here.
                         this.results = data[0]
                     } else {
+                        const { data } = await this.$axios.get(`${process.env.localUrl}/api/guests?name_contains=${encodeURIComponent(val)}`)
+                        // TODO: Need some error handling here.
+                        // TODO: We shouldn't really be getting this info on the frontend.
+                        for (let i=0; i<data.length; i++) {
+                           if (data[i].name.toLowerCase()===val.toLowerCase()) {
+                               this.results=data[i]
+                               return this.searching=false
+                           }
+                        }
                         this.results = "Too many results. Keep typing..."
                     }
                     this.searching=false
