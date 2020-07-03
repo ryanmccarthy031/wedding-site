@@ -24,12 +24,6 @@
     "place_name": {
       "type": "string"
     },
-    "latitude": {
-      "type": "decimal"
-    },
-    "longitude": {
-      "type": "decimal"
-    },
     "website": {
       "type": "string"
     },
@@ -47,6 +41,12 @@
       "type": "component",
       "repeatable": false,
       "component": "contact-info.phone-number"
+    },
+    "latitude": {
+      "type": "float"
+    },
+    "longitude": {
+      "type": "float"
     }
   }
 }
