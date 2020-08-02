@@ -1,25 +1,23 @@
 <template>
     <GMap
-    ref="gMap"
-    language="en"
-    :options="options"
-    :zoom="14"
-    >
-    <GMapMarker
-        v-for="(location, index) in coordArray"
-        :key="`location_${index}`"
-        :position="{lat: location.lat, lng: location.lng}"
-        :options="marker"
-        @click="currentLocation = location"
-    >
-        <GMapInfoWindow :options="{maxWidth: 200}">
-        <code>
-            lat: {{ location.lat }},
-            lng: {{ location.lng }}
-        </code>
-        </GMapInfoWindow>
-    </GMapMarker>
-    <GMapCircle :options="circleOptions"/>
+        class="h-100"
+        ref="gMap"
+        language="en"
+        :options="options"
+        :zoom="14">
+        <GMapMarker
+            v-for="(location, index) in coordArray"
+            :key="`location_${index}`"
+            :position="{lat: location.latitude, lng: location.longitude}"
+            :options="getMarker(index)"
+            @click="centerMap(location)">
+            <GMapInfoWindow 
+                :options="{
+                    maxWidth: 200,
+                    content: getInfo(location),
+                }">
+            </GMapInfoWindow>
+        </GMapMarker>
     </GMap>
 
 </template>
@@ -31,38 +29,57 @@
         },
         data() {
             return {
-                currentLocation: {},
-                circleOptions: {},
-                pins: {}
+                currentLocation: { lat: 44.9380, lng: -123.0280 },
+                pins: {},
+                hidden: true,
             }
         },
-        computed: {
-            marker () {
+        // TODO: How can I get sass variables into the script?
+        methods: {
+            getInfo (loc) {
+                let str = `<div style="font-family: IM Fell English SC">${loc.name}</div>`;
+                str += `<div style="font-family: IM Fell English">${loc.place_name}</div>`;
+                str += `<div style="font-family: IM Fell English SC"><a rel="noopener noreferrer" target="_blank" href="${loc.directionLink}">Get Directions</a></div>`
+                return str
+            },
+            centerMap (loc) {
+                this.currentLocation={ lat: 144.9380, lng: -123.0280 }
+            },
+            getMarker (index) {
                 // TODO: Add fill color and stroke color variables
+                let label = index+1
+
                 return {
                     icon: {
                         path: 'M 0,0 C -12,-20 -10,-22 -10,-25 A 10,10 0 1,1 10,-25 C 10,-25 12,-20 0,0 z',
-                        fillColor: '#ff0000',
+                        fillColor: '#212529',
                         fillOpacity: 1,
-                        strokeColor: '#00ff00',
+                        strokeColor: '#f9f9ee',
                         strokeWeight: 1,
                         scale: 1.25,
-                        label: "S"
-                    }
+                        labelOrigin: {
+                            x: 0,
+                            y: -20,
+                        }
+                    },
+                    label: {
+                        text: label.toString(),
+                        color: "#f9f9ee",
+                        fontSize: "1rem",
+                        fontFamily: 'IM Fell English',
+                    },
                 }
             },
+        },
+
+        computed: {
             coordArray () {
-                const array = []
-                console.log(this.places)
+                const mapPlaces = []
                 for (let i=0; i<this.places.length; i++) {
-                    if (this.places[i].latitude && this.places[i].longitude) {
-                        array.push({
-                            lat: this.places[i].latitude, 
-                            lng: this.places[i].longitude
-                        })
-                    }
+                    if (this.places[i].latitude && this.places[i].longitude) mapPlaces.push(this.places[i])
+                    else this.places[i-1].name = `${this.places[i-1].name} & ${this.places[i].name}`
                 }
-                return array
+                return this.places.filter(place=>place.latitude && place.latitude) || []
             },
             mapStyle () {
                 return [
@@ -70,27 +87,27 @@
                         featureType: "road",
                         elementType: "geometry",
                         // TODO: Set color variables for use here
-                        // stylers: [{ color: '#ff0000' }]
+                        stylers: [{ color: '#f9f9ee' }]
                     }, 
                     {
                         featureType: 'all',
                         elementType: 'labels.text.stroke',
                         // TODO: Set color variables for use here
-                        // stylers: [{ color: '#0000ff'}]
+                        stylers: [{ color: '#f9f9ee'}]
                     }
                 ]
             },
             options () {
                 return {
-                    fullscreenControl: false,
-                        center: { lat: 44.9380, lng: -123.0280 },
-                        zoom: 14,
-                        styles: this.mapStyle,
-                        streetViewControl: false,
-                        mapTypeControlOptions: {
-                            mapTypeIds: [],
-                        },
-                        controlSize: 25,
+                    fullscreenControl: true,
+                    center: this.currentLocation,
+                    zoom: 14,
+                    styles: this.mapStyle,
+                    streetViewControl: true,
+                    mapTypeControlOptions: {
+                        mapTypeIds: [],
+                    },
+                    controlSize: 25,
                 }
             }
         }

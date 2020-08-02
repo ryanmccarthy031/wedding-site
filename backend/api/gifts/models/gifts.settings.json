@@ -15,14 +15,8 @@
     "email": {
       "type": "email"
     },
-    "message": {
-      "type": "richtext"
-    },
     "amount": {
       "type": "decimal"
-    },
-    "item": {
-      "type": "string"
     }
   }
 }

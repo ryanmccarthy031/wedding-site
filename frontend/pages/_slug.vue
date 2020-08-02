@@ -1,56 +1,74 @@
 <template>
   <section class="section">
-    <h2>{{currentPage.title}}</h2>
-    <div class="content columns is-mobile">
-      <div class="text"
-        v-for="(text, index) of currentPage.text">
-          <div v-if="text.paragraph" v-html="$md.render(text.paragraph)"></div>
-      </div>
-    </div>
+    <b-container>
+      <b-row class="justify-content-md-center">
+        <b-col md="8">
+          <h2 class="text-center mb-5">{{currentPage.title}}</h2>
+          <div class="content columns is-mobile">
+            <div class="text-justify"
+              v-for="(text, index) of currentPage.text">
+                <div v-if="text.paragraph" v-html="$md.render(text.paragraph)"></div>
+            </div>
+          </div>
+        </b-col>
+      </b-row>
+    </b-container>
     <b-container
-      v-if="this.places.length">
+      v-if="places.length">
       <b-row>
         <b-col
-          md="6">
-          <div
-            v-for="(place, index) of this.places">
-            <h3>
-                <component 
-                  :is="place.website?'a':'span'" 
-                  :href="place.website || ''" 
-                  target="_blank">{{place.name}}
-                </component>
-            </h3>
-            <p v-if="place.text">{{place.text}}</p>
-            <p v-if="place.date_time">{{$moment(place.date_time).tz("America/Los_Angeles").format("D MMMM YYYY, h:mmA")}}</p>
-            <p v-if="place.place_name">{{place.place_name}}</p>
-            <Address
-              class="address"
-              v-if="place.address"
-              :street-a="place.address.street1" 
-              :street-b="place.address.street2" 
-              :city="place.address.city"
-              :state="place.address.state"
-              :zip="place.address.zip_code"
-              />
-            <!--{{place}}<br /><br />-->
-          </div>
+          :md="hasCoords ? 6 : 12">
+          <component :is="hasCoords? 'ol' : 'ul'">
+            <li :class="[{'pl-4' : hasCoords}, 'place', 'mb-4']"
+              v-for="(place, index) of places">
+              <h3>{{place.name}}</h3>
+              <div v-if="place.text" v-html="$md.render(place.text)"></div>
+              <div v-if="place.showDate && place.date_time"></div>
+              <div v-if="place.date_time">
+                <span v-if="place.showDate">{{$moment(place.date_time).tz("America/Los_Angeles").format("D MMMM YYYY")}}, </span>
+                <span>{{$moment(place.date_time).tz("America/Los_Angeles").format("h:mmA")}}</span>
+              </div>
+              <div v-if="place.place_name">{{place.place_name}}</div>
+              <a v-if="place.website" class="link" :href="place.website" target="_blank">Website</a>
+              <Address
+                class="address"
+                v-if="place.address"
+                :street-a="place.address.street1" 
+                :street-b="place.address.street2" 
+                :city="place.address.city"
+                :state="place.address.state"
+                :zip="place.address.zip_code"
+                />
+                <div>
+                  <a v-if="place.directionLink" class="link" :href="place.directionLink" target="_blank">Get Directions</a>
+                </div>
+
+                <b-img v-if="index!==places.length-1" class="pl-4 pt-2" :src="hasCoords ? '/narrow-divider.png' : 'wide-divider.png'" />
+              <!--{{place}}<br /><br />-->
+            </li>
+           
+          </component>
         </b-col>
         <b-col
           md="6"
           v-if="hasCoords"
           class="column map">
-          <Map 
-            :places="this.currentPage.places"/>
+          <b-card 
+            class="w-100 h-100" 
+            no-body>
+            <Map :places="places"/>
+          </b-card>
         </b-col>
       </b-row>
     </b-container>
+    <b-container
+      v-if="this.currentPage.include_payments">
+      <Payment />
+    </b-container>
     <div
       v-if="currentPage.is_guest_management">
-        <GuestQuestions v-if="$store.state.currentGuest.hasOwnProperty('name') && !$store.state.currentGuest.hasOwnProperty('is_coming')" />
-        <GuestManager v-else-if="$store.state.currentGuest.hasOwnProperty('name')" />
-        <GuestFinder v-else />
-
+          <GuestManager v-if="$store.state.currentGuest.hasOwnProperty('name')" />
+          <GuestFinder v-else />
     </div>
   </section>
 </template>
@@ -59,7 +77,7 @@
 import Address from '~/components/Address'
 import GuestFinder from '~/components/GuestFinder'
 import GuestManager from '~/components/GuestManager'
-import GuestQuestions from '~/components/GuestQuestions'
+import Payment from '~/components/Payment'
 import Map from '~/components/Map'
 import { mapState } from 'vuex'
 
@@ -67,6 +85,16 @@ export default {
   validate ({ params, store }) {
     if (Object.keys(store.state.pages).includes(params.slug) || typeof params.slug==='undefined') return true
     return false
+  },
+  head () {
+    return {
+      title: this.slug==='home' ? this.$store.state.names.join(' & ') : `${this.currentPage.title} | ${this.$store.state.names.join(' & ') }`,
+      meta: [
+        // hid is used as unique identifier. Do not use `vmid` for it as it will not work
+        { hid: 'description', name: 'description', content: 'My custom description' },
+        
+      ]
+    }
   },
   computed: {
     ...mapState({
@@ -78,7 +106,27 @@ export default {
       return typeof this.$route.params.slug === 'undefined' ? 'home' : this.$route.params.slug
     },
     places () {
-      return this.currentPage.places
+      const places = []
+      for (let i=0; i<this.currentPage.places.length; i++) {
+          const query = []
+          const place = { ...this.currentPage.places[i] }
+          place.showDate = true
+          if (this.currentPage.places[i-1] && place.date_time) {
+            if (this.$moment(place.date_time).tz("America/Los_Angeles").format("DD MM YYYY") === this.$moment(this.currentPage.places[i-1].date_time).tz("America/Los_Angeles").format("DD MM YYYY")) place.showDate = false
+          }
+          if (place.address) {
+            if (place.address.street1) query.push(encodeURIComponent(place.address.street1))
+            if (place.address.street2) query.push(encodeURIComponent(place.address.street2))
+            if (place.address.city) query.push(encodeURIComponent(place.address.city))
+            if (place.address.state) query.push(encodeURIComponent(place.address.state))
+            if (place.address.zip_code) query.push(encodeURIComponent(place.address.zip_code))
+          }
+          if (query.length>0) {
+            place['directionLink'] = "https://www.google.com/maps/search/?api=1&query=" + query.join('+');  
+          }
+          places.push(place)
+      }
+      return places
     },
     hasCoords () {
       // If any of the places has longitude and latitude, we'll include a map.
@@ -92,8 +140,8 @@ export default {
     Address,
     GuestFinder,
     GuestManager,
-    GuestQuestions,
     Map,
+    Payment,
   }
 }
 </script>

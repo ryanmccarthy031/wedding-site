@@ -1,39 +1,49 @@
 <template>
-    <div>
-        <label for="name">Enter your name as it appears on the invitation</label>
-        <b-form-input 
-            id="name" 
-            v-model="name" 
-            @input="getGuest($event)"
-            class="mb-4"
-            placeholder="Enter your name">
-        </b-form-input>
-        <!-- TODO: Position this spinner inside the input div-->
-        <b-spinner 
-            v-if="searching"
-            type="grow" 
-            label="Spinning"></b-spinner>
-        <b-card v-if="results">
-            <b-card-text
-                 v-if="typeof results === 'object' && results !== null">
-                Are you {{ results.name }}?
-            </b-card-text>
-            <b-card-text v-else>{{ results }}</b-card-text>
-            <div
-                v-if="typeof results === 'object' && results !== null">
-                <b-button 
-                    @click="clearForm()"
-                    variant="outline-danger">
-                    No
-                </b-button>
-                <b-button 
-                    @click="setGuest()"
-                    variant="outline-primary">
-                    Yes
-                </b-button>
-            </div>
-        </b-card>
-    </div>
+    <b-row class="justify-content-md-center">
+        <b-col md="8">
+            <label for="name">Enter your name as it appears on the invitation</label>
+            <b-input-group class="mb-4">
+                <b-form-input 
+                    type="text"
+                    id="name" 
+                    v-model="name" 
+                    @input="getGuest($event)"
+                    placeholder="Enter your name">
+                    <b-spinner small variant="primary" type="grow" label="Spinning"></b-spinner>
+                </b-form-input>
+
+                <b-input-group-append
+                    v-if="!searching">
+                    
+                </b-input-group-append>
+            </b-input-group>
+            <!-- TODO: Position this spinner inside the input div-->
+            <b-spinner 
+                v-if="searching"
+                type="grow" 
+                label="Spinning"></b-spinner>
+            <b-card v-if="results">
+                <b-card-text
+                    v-if="typeof results === 'object' && results !== null">
+                    Are you {{ results.name }}?
+                </b-card-text>
+                <b-card-text v-else>{{ results }}</b-card-text>
+                <div
+                    v-if="typeof results === 'object' && results !== null">
+                    <b-button 
+                        @click="clearForm()"
+                        variant="outline-danger">
+                        No
+                    </b-button>
+                    <b-button 
+                        @click="setGuest()"
+                        variant="outline-primary">
+                        Yes
+                    </b-button>
+                </div>
+            </b-card>
+        </b-col>
+    </b-row>
 </template>
 
 <script>
@@ -60,7 +70,7 @@
                     // Also, fuzzy matching would be awesome, but I'm not quite sure how to get it.
                     const { data } = await this.$axios.get(`${process.env.localUrl}/api/guests/count?name_contains=${encodeURIComponent(val)}`)
                     // TODO: Need some error handling here.
-                    if (data===0) this.results = "No matches found."
+                    if (data===0) this.results = "It doesn't look like we invited anyone by that name. Are you sure you've got the right wedding?"
                     else if (data===1) {
                         const { data } = await this.$axios.get(`${process.env.localUrl}/api/guests?name_contains=${encodeURIComponent(val)}`)
                         // TODO: Need some error handling here.

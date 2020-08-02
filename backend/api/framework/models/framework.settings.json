@@ -13,6 +13,11 @@
       "type": "component",
       "repeatable": true,
       "component": "content.pages"
+    },
+    "host_names": {
+      "type": "component",
+      "repeatable": true,
+      "component": "people.name"
     }
   }
 }

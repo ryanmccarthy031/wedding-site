@@ -4,13 +4,6 @@
         <b-card-title
             class="d-flex">
             Guests
-            <b-button 
-                @click="save()"
-                size="sm"
-                class="ml-auto"
-                variant="outline-success">
-                Save
-            </b-button>
         </b-card-title>
         <b-form-group label="Who will be attending?">
 
@@ -20,6 +13,7 @@
                 <b-input-group class="mb-2">
                     <b-form-input
                         :value="allGuests[index].name"
+                        :state="allGuests[index].on_invitation && !isValid ? false : null"
                         @input="handleNameChange(person.id, $event, index)"
                         type="text">
                     </b-form-input>
@@ -32,7 +26,7 @@
                                 icon="dash"></b-icon>
                         </b-button>
                         <b-button 
-                            v-if="allGuests.length-1===index"
+                            v-if="allGuests.length-1===index && index < 4"
                             @click="addAttending()"
                             variant="outline-primary">
                             <b-icon
@@ -52,9 +46,17 @@
         data() {
             return {
                 currentGuest: null,
+                saving: false,
+                guestState: null,
             }
         },
         computed: {
+            isValid () {
+                for (let i=0; i<this.allGuests.length; i++) {
+                    if (this.allGuests[i].on_invitation && this.allGuests[i].name === '') return false
+                }
+                return true
+            },
             guest: {
                 async set (val) {
                     this.currentGuest=val
@@ -71,8 +73,7 @@
                     this.guest=guest
                 },
                 get () {
-                    const attending = [ ...this.guest.guests_attending ]
-                    return attending
+                    return [ ...this.guest.guests_attending ]
                 },
             },
             invited: {
@@ -96,14 +97,11 @@
                 return (m = Math, d = Date, h = 16, s = s => m.floor(s).toString(h)) =>
                     s(d.now() / 1000) + ' '.repeat(h).replace(/./g, () => s(m.random() * h))
             },
-            async save() {
-
-                this.$store.commit('add', {
-                    entity: 'currentGuest',
-                    data: this.guest,
-                })
-                // TODO: Error handling here
-                const { data } = await this.$axios.put(`${process.env.localUrl}/api/guests/${this.guest._id}`, this.guest)
+            processData () {
+                return {
+                    name: this.invited.name,
+                    guests_attending: this.attending,
+                }
             },
             addAttending() {
                 const attending = Object.values(this.attending)
@@ -124,8 +122,6 @@
             },
             handleNameChange (id, newName, index) {
                 if (this.allGuests[index].hasOwnProperty('on_invitation')) {
-                    // TODO: Some kind of alert for attempts to delete the primary name
-                    if (newName === '') return
                     return this.invited = newName                
                 } else {
                     if (newName==='') this.removeAttending(id, index)

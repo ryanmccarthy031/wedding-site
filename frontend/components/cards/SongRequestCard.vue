@@ -4,25 +4,17 @@
         <b-card-title
             class="d-flex">
             Song Requests
-            <b-button 
-                @click="save()"
-                size="sm"
-                class="ml-auto"
-                variant="outline-success">
-                Save
-            </b-button>
         </b-card-title>
         <b-form-group label="We'd like to have a little something for everyone at the reception.
             What would you like to hear?">
-            <b-row>
+            <b-row 
+                v-for="(song, index) of songs"
+                :key="`song_${index}`">
                 <b-col
                     md="5">
-                    <div
-                        class="mb-4"
-                        v-for="(song, index) of songs"
-                        :key="`song_${index}`">
+                    <div class="mb-4">
                         <b-form-input
-                            id="song_title"
+                            :id="`song_title_${index}`"
                             class="mb-2"
                             placeholder="Song Title"
                             @input="handleChange($event, index, 'title')"
@@ -31,7 +23,7 @@
                             type="text">
                         </b-form-input>
                         <b-form-input
-                            id="artist"
+                            :id="`artist_${index}`"
                             class="mb-2"
                             placeholder="Artist"
                             @input="handleChange($event, index, 'artist')"
@@ -40,10 +32,17 @@
                             type="text">
                         </b-form-input>
                         <b-button
-                            class="w-100"
+                            class="w-100 mb-2"
                             @click="remove(index)"
                             variant="outline-danger">
                             Remove Song
+                        </b-button>
+                        <b-button
+                            v-if="index===songs.length-1"
+                            class="w-100"
+                            @click="add()"
+                            variant="outline-primary">
+                            Add Another Song
                         </b-button>
                     </div>
                 </b-col>
@@ -51,31 +50,25 @@
                     md="7">
                     <client-only placeholder="Loading Text Editor...">
                         <!-- TODO: Border radius on this text editor to match buttons -->
-                        <vue-editor :editor-toolbar="customToolbar" v-model="comment"></vue-editor>
+                        <vue-editor  
+                            class="mb-4" 
+                            :editor-toolbar="customToolbar" 
+                            @input="handleChange($event, index, 'comment')"
+                            :value="song.comment"></vue-editor>
                     </client-only>
                 </b-col>
             </b-row>
 
-
-
-            <b-button
-                pill
-                @click="add()"
-                variant="outline-primary">
-                Add Another Song
-            </b-button>
         </b-form-group>
 
     </b-card>
 </template>
 
 <script>
-    import cloneDeep from 'lodash/cloneDeep'
     export default {
         data: () => ({
+            saving: false,
             currentSongs:[],
-            removedSongs: [],
-            currentComment: null,
             customToolbar: [
                 [{ header: [false, 1, 2, 3] }],
                 ["bold", "italic", "underline"],
@@ -90,26 +83,12 @@
                 return {
                     artist: '',
                     title: '',
+                    comment: 'What do you love about this song?',
                     guest: this.guestId,
                 }
             },
             defaultComment () {
                 return `What do you love about ${this.songs.length>1 ? 'these songs' : 'this song'}?`
-            },
-            comment: {
-                set (val) {
-                    this.currentComment=val
-                },
-                get () {
-                    if (this.currentComment===null) {
-                        if (this.$store.state.currentGuest.songs_comment) {
-                            this.currentComment = this.$store.state.currentGuest.songs_comment
-                        } else {
-                            this.currentComment=this.defaultComment
-                        }
-                    }
-                    return this.currentComment
-                },
             },
             songs: {
                 set (val) {
@@ -118,7 +97,7 @@
                 get () {
                     if (!this.currentSongs.length) {
                         if (this.$store.state.currentGuest.songs.length) {
-                            this.currentSongs=cloneDeep(this.$store.state.currentGuest.songs)
+                            this.currentSongs= [ ...this.$store.state.currentGuest.songs ]
                         } else {
                             this.currentSongs = [{ ...this.emptySong }]
                         }
@@ -129,57 +108,35 @@
         },
         methods: {  
             handleChange (val, index, field) {
-                const songs= cloneDeep(this.songs)
+                const songs= [ ...this.songs ]
+                songs[index] = { ...songs[index] }
                 songs[index][field] = val
                 this.songs = songs
             },
             remove (index) {
-                const songs=cloneDeep(this.songs)
-                if (songs[index].hasOwnProperty('id')) {
-                    this.removedSongs.push(songs[index])
-                }
+                let songs = [ ...this.songs ]
                 if (songs.length===1) {
-                    songs=[{ ...this.emptySong }]
+                    songs = [{ ...this.emptySong }]
                 } else {
                     songs.splice(index, 1)
                 }
                 this.songs = songs
             },
             add () {
-                const songs = cloneDeep(this.songs)
+                const songs = [ ...this.songs ]
                 songs.push({ ...this.emptySong })
                 this.songs=songs
             },
-            async save () {
-                const guest = { ...this.$store.state.currentGuest }
-                if (this.currentComment!==`<p>${this.defaultComment}</p>`) {
-                    guest.songs_comment = this.currentComment
-                    guest.songs = this.songs
-                    this.$store.commit('add', {
-                        entity: 'currentGuest',
-                        data: guest,
-                    })
-                    // TODO: Error handling here
-                    await this.$axios.put(`${process.env.localUrl}/api/guests/${guest._id}`, guest)
-                }
-                for (let i=0; i<this.songs.length; i++) {
-                    if (this.songs[i].title==='' && this.songs[i].artist==='') continue
-                    // TODO: Error handling here
-                    if (!this.songs[i].id) {
-                       const { data } = await this.$axios.post(`${process.env.localUrl}/api/songs`, this.songs[i])
-                       const songs = cloneDeep(this.songs)
-                       songs[i].id=data.id
-                       this.songs = songs
-                    } else {
-                        await this.$axios.put(`${process.env.localUrl}/api/songs/${this.songs[i].id}`, this.songs[i])
+            processData () {
+                const songs = [ ...this.songs ]
+                for (let i=this.songs.length-1; i>=0; i--) {
+                    if (this.songs[i].title==='' && this.songs[i].artist==='') {
+                        songs.splice(i, 1)
                     }
                 }
-
-                for (let i=0; i<this.removedSongs.length; i++) {
-                    await this.$axios.delete(`${process.env.localUrl}/api/songs/${this.removedSongs[i].id}`, this.removedSongs[i])
-                }
-                this.removedSongs = []
-            }
+                this.songs = songs.length ? songs : [{ ...this.emptySong }]
+                return { songs: songs }
+            },
         },
     }
 </script>

@@ -4,32 +4,39 @@
         <b-card-title
             class="d-flex">
             Contact Info
-            <b-button 
-                @click="save()"
-                size="sm"
-                class="ml-auto"
-                variant="outline-success">
-                Save
-            </b-button>
         </b-card-title>
-        <b-row>
-            <b-col 
-                v-for="(field, key) in computedAddress"
-                :key="`address_field_${key}`"
-                :md="getWidth(key)">
-                <b-form-input 
-                    :id="key" 
-                    class="mb-2"
-                    @input="validate()"
-                    :placeholder="field.placeholder" 
-                    v-model="field.value"
-                    :state="field.state"
-                    trim>
-                </b-form-input>
-            </b-col>
-        </b-row>
-        <b-row>
+            <b-card-text>Be sure to leave us an email, so we can share the pictures with you when they're available!</b-card-text>
+              <b-row>
+
             <b-col md="6">
+                <b-input-group 
+                    v-for="(email, index) in emails"     
+                    :key="`email_${index}`"             
+                    class="mb-2">
+                    <b-form-input
+                        placeholder="Email"
+                        @input="handleEmailInput($event, index)"
+                        :value="emails[index].email"
+                        type="email">
+                    </b-form-input>
+                    <b-input-group-append>
+                        <b-button
+                            @click="removeEmail(index)"
+                            variant="outline-danger">
+                            <b-icon
+                                icon="dash"></b-icon>
+                        </b-button>
+                        <b-button 
+                            v-if="index===emails.length-1 && index < 4"
+                            @click="addEmail()"
+                            variant="outline-primary">
+                            <b-icon
+                                icon="plus"></b-icon>
+                        </b-button>
+                    </b-input-group-append>
+                </b-input-group>
+            </b-col>
+                        <b-col md="6">
                 <b-input-group
                     v-for="(phone, index) in phones"     
                     :key="`phone_${index}`"             
@@ -50,34 +57,7 @@
                         </b-button>
                         <b-button
                             @click="addPhone()"
-                            v-if="index===phones.length-1"
-                            variant="outline-primary">
-                            <b-icon
-                                icon="plus"></b-icon>
-                        </b-button>
-                    </b-input-group-append>
-                </b-input-group>
-            </b-col>
-            <b-col md="6">
-                <b-input-group 
-                    v-for="(email, index) in emails"     
-                    :key="`email_${index}`"             
-                    class="mb-2">
-                    <b-form-input
-                        placeholder="Email"
-                        @input="handleEmailInput($event, index)"
-                        :value="emails[index].email"
-                        type="email">
-                    </b-form-input>
-                    <b-input-group-append>
-                        <b-button 
-                            @click="removeEmail(index)"
-                            variant="outline-danger">
-                            <b-icon
-                                icon="dash"></b-icon>
-                        </b-button>
-                        <b-button 
-                            @click="addEmail()"
+                            v-if="index===phones.length-1 && index < 4"
                             variant="outline-primary">
                             <b-icon
                                 icon="plus"></b-icon>
@@ -86,6 +66,23 @@
                 </b-input-group>
             </b-col>
         </b-row>
+        <b-row>
+            <b-col 
+                v-for="(field, key) in computedAddress"
+                :key="`address_field_${key}`"
+                :sm="getWidth(key)">
+                <b-form-input 
+                    :id="key" 
+                    class="mb-2"
+                    @input="validate()"
+                    :placeholder="field.placeholder" 
+                    v-model="field.value"
+                    :state="field.state"
+                    trim>
+                </b-form-input>
+            </b-col>
+        </b-row>
+  
     </b-card>
 
 </template>
@@ -104,12 +101,8 @@
         },
         data() {
             return {
+                saving: false,
                 currentAddress: {
-                    name: {
-                        placeholder: 'Name',
-                        value: null,
-                        state: null,
-                    },
                     street1: {
                         placeholder: 'Street 1',
                         value: null,
@@ -136,7 +129,6 @@
                         state: null,
                     },
                 },
-                currentName: null,
                 currentStreet1: null,
                 currentStreet2: null,
                 currentCity: null,
@@ -164,33 +156,27 @@
                     }
                 }
             },
-            save () {
-                this.validate() 
-
-                for (let i=0; i<this.phones.length; i++) {
+            processData () {
+                for (let i=this.phones.length - 1; i>=0; i--) {
                     if (this.phones[i].phone_number==='') {
-                        const phones = [ ...this.phones ] 
-                        phones.splice(i, 1)
-                        this.phones = phones
+                        this.removePhone(i)
                     }
                 }
                 const phones = this.phones.length===1 && this.phones[0].phone_number==='' ? [] : this.phones
 
-                for (let i=0; i<this.emails.length; i++) {
+                for (let i=this.emails.length - 1; i>=0; i--) {
                     if (this.emails[i].email==='') {
-                        const emails = [ ...this.emails ] 
-                        emails.splice(i, 1)
-                        this.emails = emails
+                        this.removeEmail(i)
                     }
                 }
                 const emails = this.emails.length===1 && this.emails[0].email==='' ? [] : this.emails
 
+
                 for (const key in this.currentAddress) {
-                    if (this.currentAddress[key].state===false) return
+                    if (this.currentAddress[key].state===false) return false
                 }
 
                 const guest = { ...this.guest }
-                guest.name = this.currentAddress.name.value
                 guest.phone_number = phones
                 guest.email = emails
                 guest.address = {
@@ -203,12 +189,8 @@
                 if (this.guest.address && this.guest.address.id) {
                     guest.address.id = this.guest.address.id
                 }
-                this.$store.commit('add', {
-                    entity: 'currentGuest',
-                    data: guest,
-                })
-                const { data } = this.$axios.put(`${process.env.localUrl}/api/guests/${guest.id}`, guest)
 
+                return {...guest}
             },
             addPhone () {
                 const phones = [ ...this.phones ]
@@ -217,7 +199,8 @@
             },
             removePhone (index) {
                 const phones = [ ...this.phones ]
-                phones.splice(index, 1)
+                if (phones.length===1) phones[index] = {phone_number:''}
+                else phones.splice(index, 1)
                 this.phones = phones
                 
             },
@@ -233,7 +216,8 @@
             },
             removeEmail (index) {
                 const emails = [ ...this.emails ]
-                emails.splice(index, 1)
+                if (emails.length===1) emails[index] = {email:''}
+                else emails.splice(index, 1)
                 this.emails = emails
             },
             handleEmailInput (val, index) {
@@ -243,6 +227,12 @@
             },
         },
         computed: {
+            isValid () {
+                for (const key in this.currentAddress) {
+                   if (this.currentAddress[key].state===false) return false
+                }
+                return true
+            },
             ...mapState({
                 stateGuest: state=>state.currentGuest
             }),
@@ -267,17 +257,6 @@
                     state: '',
                     zip: '',
                  }
-            },
-            name: {
-                set (val) {
-                    this.currentName = val
-                },
-                get () {
-                    if (this.currentName===null) {
-                        if (this.guest.name) this.currentName = this.guest.name
-                    }
-                    return this.currentName
-                },
             },
             phones: {
                 set (val) {

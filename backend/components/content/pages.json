@@ -33,6 +33,10 @@
     "is_guest_management": {
       "type": "boolean",
       "default": false
+    },
+    "include_payments": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

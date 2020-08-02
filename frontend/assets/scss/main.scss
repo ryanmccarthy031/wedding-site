@@ -1,0 +1,225 @@
+
+
+
+// Base grayscale colors definitions
+$white: #fff !default;
+$gray-100: #f8f9fa !default;
+$gray-200: #e9ecef !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #adb5bd !default;
+$gray-600: #6c757d !default;
+$gray-700: #495057 !default;
+$gray-800: #343a40 !default;
+$gray-900: #212529 !default;
+$black: #000 !default;
+
+// Base colors definitions
+$blue: #007bff !default;
+$indigo: #6610f2 !default;
+$purple: #6f42c1 !default;
+$pink: #e83e8c !default;
+$red: #dc3545 !default;
+$orange: #fd7e14 !default;
+$yellow: #ffc107 !default;
+$green: #28a745 !default;
+$teal: #20c997 !default;
+$cyan: #17a2b8 !default;
+
+// Theme color default definitions
+$primary: $blue !default;
+$secondary: $gray-600 !default;
+$success: $green !default;
+$info: $cyan !default;
+$warning: $yellow !default;
+$danger: $red !default;
+$light: $gray-100 !default;
+$dark: $gray-800 !default;
+
+// This table defines the theme colors (variant names)
+$theme-colors: () !default;
+$theme-colors: map-merge(
+  (
+    'primary': $primary,
+    'secondary': $secondary,
+    'success': $success,
+    'info': $info,
+    'warning': $warning,
+    'danger': $danger,
+    'light': $light,
+    'dark': $dark
+  ),
+  $theme-colors
+);
+// Your variable overrides
+$body-bg: #f9f9ee;
+$sidebar-bg: #f2f2db;
+$body-color: $gray-900;
+$font-family-serif: 'IM Fell English', Georgia, "Times New Roman", Times, serif !default;
+$font-family-strong: 'IM Fell English SC', Georgia, "Times New Roman", Times, serif !default;
+
+$font-family-cursive: 'Monsieur La Doulaise', cursive !default;
+$font-family-base: $font-family-serif !default;
+@import url('https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&family=Monsieur+La+Doulaise&display=swap');
+html { 
+    font-size: 16px;
+}
+body { 
+    overflow-x: hidden;
+}
+h1,h2,h3,h4,h5,h6 {
+    font-family: $font-family-strong;
+}
+.header img {
+    max-height: 200px;
+    &.float-left {
+        transform: scaleX(-1);
+    }
+}
+.header {
+    background-image: url('/header.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.b-sidebar-body {
+    background-color: $sidebar-bg;
+    a span {
+        color: $body-color;
+        opacity: .6;
+        &.active {
+            opacity: 1;
+        }
+    }
+}
+.place h3 {
+    font-size: 1.15rem;
+}
+ol img {
+    max-width: 4rem;
+    margin: auto;
+}
+ul img {
+    max-width: 12rem;
+}
+ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin: auto;
+    text-align: center;
+}
+nav {
+    font-family: $font-family-strong;
+    display:block;
+    font-size: 1.2rem;
+    ul {
+        text-align: left;
+    }
+}
+.GMap__Wrapper{
+    height: 100% !important;
+}
+.map {
+    min-height: 400px;
+}
+.payment {
+    min-height: 330px;
+}
+.thanks {
+    min-height: 100px;
+}
+@media (min-width: 576px) {
+    h1.secondary div {
+        display: inline
+    }
+    .payment {
+        min-height: 285px;
+    }
+}
+
+.toggler-box {
+    background-color: transparent;
+    top: 1em;
+    left: 1em;
+    position: absolute;
+
+}
+.toggler {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(33,37,41, 1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    z-index:80000;
+}
+div[role=navigation] {
+    position: sticky;
+    top: 0;
+    background-color: #f9f9ee;
+}
+div[role=navigation].stuck {
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 4px 5px 0;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    transition: .5s ease-in-out;
+}
+.place a, .link, .nav-item a span {
+    font-size: 1rem;
+    font-family: $font-family-strong;
+    text-decoration: none !important;
+    transition: color 0.3s ease-in-out;
+    display: inline-block;
+    vertical-align: bottom;
+    font-family: $font-family-strong;
+    transition: all .3s ease-in-out;
+    position: relative;
+    overflow: hidden;
+
+    &:hover {
+      color: $gray-900;
+    }
+    &:hover::after {
+        width: 100%;
+    }
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: 3px;
+        left: 0;
+        width: 0%;
+        height: 1px;
+        background-color:  $gray-900;
+        transition: all .3s;
+    }
+    &:active {
+        color:$body-color;
+    }
+}
+  
+h2::after {
+    content: "*******************";
+    display: block;
+    text-align: center;
+    font-size: 1rem;
+}
+.flourish {
+    font-family: $font-family-cursive !important;
+    font-size: 5rem;
+}
+.conjunction {
+    font-family: $font-family-strong !important;
+    font-size: 2.5rem;
+}
+// Quill Editor
+.ql-toolbar {
+    border-top-right-radius: 0.25rem;
+    border-top-left-radius: 0.25rem;
+}
+.ql-container {
+    border-bottom-right-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+}
+.ql-container {
+    font-family: $font-family-serif !important;
+}
+// Bootstrap and its default variables
+@import '../../node_modules/bootstrap/scss/bootstrap';
+// BootstrapVue and its default variables
+@import '../../node_modules/bootstrap-vue/src/index.scss';

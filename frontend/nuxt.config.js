@@ -18,7 +18,8 @@ export default {
     protocol: process.env.PROTOCOL || 'http://',
     backendPort: process.env.BACKEND_PORT || '80',
     baseUrl: `${process.env.PROTOCOL || 'http://'}${process.env.BASE_NAME || 'localhost'}:${process.env.BACKEND_PORT||'80'}`,
-    localUrl: `${process.env.PROTOCOL || 'http://'}${process.env.LOCAL_URL || 'localhost'}:${process.env.LOCAL_PORT||'80'}`
+    localUrl: `${process.env.PROTOCOL || 'http://'}${process.env.LOCAL_URL || 'localhost'}:${process.env.LOCAL_PORT||'80'}`,
+    stripePublicKey: `${process.env.STRIPE_PUBLIC_KEY}`,
   },
   /*
   ** Headers of the page
@@ -74,9 +75,8 @@ export default {
     // Doc: https://www.npmjs.com/package/@nuxtjs/moment
     '@nuxtjs/moment',
     // Doc: https://gitlab.com/broj42/nuxt-gmaps
-    ['nuxt-gmaps',{
-      key: process.env.GMAPS_API_KEY
-    }]
+    ['nuxt-gmaps',{ key: process.env.GMAPS_API_KEY }],
+    ['vue-currency-input/nuxt', { globalOptions: { currency: 'USD'} }],
   ],
   /*
   ** Bootstrap-Vue module configuration

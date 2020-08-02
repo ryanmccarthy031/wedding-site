@@ -2,8 +2,9 @@ import axios from 'axios'
 
 export const state = () => ({
     pages: [],
+    names: [],
     currentGuest: {},
-    
+    songs: [],
 })
 
 export const getters = {}
@@ -24,6 +25,9 @@ export const actions = {
 
     const pages = await dispatch('keyObj', { array: data.pages.filter(page=>page.is_included), key: 'slug' })
     await commit('add', { entity: 'pages', data: pages })
+
+    const names = data.host_names.map(name=>name.person_name)
+    await commit('add', { entity: 'names', data: names })
   },
   keyObj ({commit}, { array, key }) {
     const obj = {}

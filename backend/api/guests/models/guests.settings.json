@@ -13,7 +13,8 @@
       "type": "string"
     },
     "is_coming": {
-      "type": "boolean"
+      "type": "boolean",
+      "default": false
     },
     "address": {
       "type": "component",
@@ -38,15 +39,13 @@
     "photoAccessToken": {
       "type": "string"
     },
-    "songs_comment": {
+    "comment": {
       "type": "richtext"
     },
     "songs": {
-      "collection": "songs",
-      "via": "guest"
-    },
-    "comment": {
-      "type": "richtext"
+      "type": "component",
+      "repeatable": true,
+      "component": "people.song"
     }
   }
 }

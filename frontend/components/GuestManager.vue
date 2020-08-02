@@ -1,5 +1,14 @@
 <template>
     <b-container>
+      <b-row class="justify-content-md-center mb-4">
+        <b-col md="6">
+          <div class="content columns is-mobile">
+            <div class="text-justify">
+                <div>Be sure to fill out everything before you hit save! And remember, you can come back any time and change your answers!</div>
+            </div>
+          </div>
+        </b-col>
+      </b-row>
         <b-row>
             <b-col
                 md="5">
@@ -7,69 +16,157 @@
                     class="mb-4"
                     title="RSVP">
                     <b-form-group>
-                        <b-form-checkbox
-                            v-model="isComing"
-                            switch size="lg">
-                            {{ guest.is_coming ? `${pronouns.contraction} coming!` :  `${pronouns.pronoun} can't make it.` }}
-                        </b-form-checkbox>
+                        <b-form-radio-group
+                            id="attendance"
+                            v-model="guestIsComing"
+                            :options="options"
+                            name="attendance">
+                        </b-form-radio-group>
                     </b-form-group>
                 </b-card>
             </b-col>
             <b-col
                 md="7">
                 <AttendanceCard 
-                    v-if="guest.is_coming" />
-                <CommentCard 
-                    v-else />
+                    ref="attendance"
+                    v-if="guestIsComing" />
+                <div v-else>
+                    <EmailCard ref="email" />
+                    <CommentCard ref="comment" />
+                </div>
             </b-col>
         </b-row>
-        <b-row v-if="guest.is_coming">
+        <b-row v-if="guestIsComing">
             <b-col>
-                <SongRequestCard :guestId="this.guest.id" />
+                <AddressCard ref="address" />
             </b-col>
         </b-row>
-        <b-row v-if="guest.is_coming">
+        <b-row v-if="guestIsComing">
             <b-col>
-                <AddressCard />
+                <SongRequestCard ref="song" :guestId="this.guest.id" />
             </b-col>
         </b-row>
-        <b-row v-if="guest.is_coming">
+        <b-row v-if="guestIsComing">
             <b-col>
-                <CommentCard />
+                <CommentCard ref="comment"/>
             </b-col>
-        </b-row>                       
-
+        </b-row> 
+        <b-row class="justify-content-md-center">    
+            <b-col class="text-center">                  
+                <b-button
+                    v-if="!saving"
+                    :disabled="saving"
+                    @click.prevent="save"
+                    size="lg"
+                    variant="outline-success">
+                    Save
+                </b-button>
+                <b-spinner 
+                    v-else 
+                    class="mt-2" 
+                    variant="success" 
+                    label="Spinning">
+                </b-spinner>
+            </b-col>
+        </b-row>
     </b-container>
 </template>
 
 <script>
-    import AttendanceCard from '~/components/AttendanceCard'
-    import SongRequestCard from '~/components/SongRequestCard'
-    import CommentCard from '~/components/CommentCard'
-    import AddressCard from '~/components/AddressCard'
+    import AttendanceCard from '~/components/cards/AttendanceCard'
+    import SongRequestCard from '~/components/cards/SongRequestCard'
+    import CommentCard from '~/components/cards/CommentCard'
+    import AddressCard from '~/components/cards/AddressCard'
+    import EmailCard from '~/components/cards/EmailCard'
 
     export default {
-        computed: {
-            guest: {
-                async set (val) {
-                    this.$store.commit('add', {
-                        entity: 'currentGuest',
-                        data: val,
+                data() {
+            return {
+                saving: false,
+                isComing: null,
+            }
+        },
+        methods: {
+            async save () {
+                this.saving=true
+                let guest = {}
+                if (this.guestIsComing) {
+                    this.$refs.address.validate()
+                    const guestAddress = this.$refs.address.processData()
+                    if (guestAddress===false) {
+                        this.saving=false
+                        return this.$bvToast.toast('It looks like some of your contact info might be missing. Are you sure everything is filled out?', {
+                            title: `Something is missing`,
+                            variant: 'danger',
+                            solid: true
+                        })
+                    } 
+                    const { phone_number, email, address } = guestAddress
+
+                    const attendanceInfo = this.$refs.attendance.processData()
+                    // TODO: put in a toast here
+                    if (!attendanceInfo.name) {
+                        this.saving=false
+                        return this.$bvToast.toast('Did you delete your name? We definitely want to know who\'s coming.', {
+                            title: `Something is missing`,
+                            variant: 'danger',
+                            solid: true
+                        })
+                    }
+                    const { name, guests_attending } = attendanceInfo
+
+                    const { songs } = this.$refs.song.processData()
+                    guest = {
+                        phone_number,
+                        email,
+                        address,
+                        name,
+                        guests_attending,
+                        songs,
+                    }
+                } else {
+                    const { email } = this.$refs.email.processData()
+                    guest = { email }
+                }
+                const { comment } = this.$refs.comment.processData()
+                guest.comment = comment
+                guest.is_coming = this.guestIsComing
+                const guestData = { ...this.$store.state.currentGuest, ...guest }
+                this.$store.commit('add', {
+                    entity: 'currentGuest',
+                    data: guestData,
+                })
+
+                const { data } = await this.$axios.put(`${process.env.localUrl}/api/guests/${guestData._id}`, guestData)
+                    .catch(()=>{
+                        return this.$bvToast.toast('It looks like there was a problem saving your information. Please refresh your browser and try again.', {
+                            title: `Oh no! Something went wrong.`,
+                            variant: 'danger',
+                            solid: true
+                        })
+                        this.saving=false
                     })
-                    const { data } = await this.$axios.put(`${process.env.localUrl}/api/guests/${val._id}`, val)
-                },
-                get () {
-                    return { ...this.$store.state.currentGuest }
-                },
+                this.saving=false
             },
-            isComing: {
+        },
+        computed: {
+            options () {
+                return [
+                    { text: `${this.pronouns.pronoun} can't make it.`, value: false },
+                    { text: `${this.pronouns.contraction} coming!`, value: true },
+
+                ]
+            },
+            guest () {
+                return { ...this.$store.state.currentGuest }
+            },
+            guestIsComing: {
                 set (val) {
-                    const guest = { ...this.guest }
-                    guest.is_coming = val
-                    this.guest = guest
+                    this.isComing = val
                 },
                 get () {
-                    return this.guest.is_coming
+                    if (this.isComing===null) return this.guest.is_coming
+                    else return this.isComing
                 },
             },
             pronouns () {
@@ -94,6 +191,7 @@
             SongRequestCard,
             CommentCard,
             AddressCard,
+            EmailCard,
         }
     }
 </script>

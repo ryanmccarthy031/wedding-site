@@ -4,17 +4,9 @@
         <b-card-title
             class="d-flex">
             Comments
-            <b-button 
-                @click="save()"
-                size="sm"
-                class="ml-auto"
-                variant="outline-success">
-                Save
-            </b-button>
         </b-card-title>
         <client-only placeholder="Loading Text Editor...">
-            <!-- TODO: Border radius on this text editor to match buttons -->
-            <vue-editor :editor-toolbar="customToolbar" v-model="comment"></vue-editor>
+            <vue-editor class="mb-4" :editor-toolbar="customToolbar" v-model="comment"></vue-editor>
         </client-only>
     </b-card>
     
@@ -22,6 +14,7 @@
 <script>
     export default {
         data: () => ({
+            saving: false,
             currentComment: null,
             customToolbar: [
                 [{ header: [false, 1, 2, 3] }],
@@ -47,16 +40,8 @@
             },
         },
         methods: {
-            async save () {
-                const guest = { ...this.$store.state.currentGuest }
-                guest.comment = this.comment
-                this.$store.commit('add', {
-                    entity: 'currentGuest',
-                    data: guest,
-                })
-                // TODO: Error handling here
-                const { data } = await this.$axios.put(`${process.env.localUrl}/api/guests/${guest._id}`, guest)
-
+            processData () {
+                return { comment: this.comment }
             },
         },
     }
