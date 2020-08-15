@@ -13,6 +13,23 @@
         </b-col>
       </b-row>
     </b-container>
+    <b-container v-if="slug==='home' && carouselPhotos">
+      <b-row  class="justify-content-md-center">
+        <b-col md="8">
+          <b-carousel
+            id="carousel-fade"
+            fade
+            controls
+            indicators>
+            <b-carousel-slide
+              v-for="(photo, index) in carouselPhotos"
+              :key="`carousel-photo-${index}`"
+              :img-alt="photo.aternativeText"
+              :img-src="`${imgSrcRoot}${photo.url}`"></b-carousel-slide>
+          </b-carousel>
+        </b-col>
+      </b-row>
+    </b-container>
     <b-container
       v-if="places.length">
       <b-row>
@@ -22,12 +39,12 @@
             <li :class="[{'pl-4' : hasCoords}, 'place', 'mb-4']"
               v-for="(place, index) of places">
               <h3>{{place.name}}</h3>
-              <div v-if="place.text" v-html="$md.render(place.text)"></div>
               <div v-if="place.showDate && place.date_time"></div>
               <div v-if="place.date_time">
                 <span v-if="place.showDate">{{$moment(place.date_time).tz("America/Los_Angeles").format("D MMMM YYYY")}}, </span>
                 <span>{{$moment(place.date_time).tz("America/Los_Angeles").format("h:mmA")}}</span>
               </div>
+              <div v-if="place.text" v-html="$md.render(place.text)"></div>
               <div v-if="place.place_name">{{place.place_name}}</div>
               <a v-if="place.website" class="link" :href="place.website" target="_blank">Website</a>
               <Address
@@ -62,14 +79,18 @@
       </b-row>
     </b-container>
     <b-container
-      v-if="this.currentPage.include_payments">
-      <Payment />
+      v-if="this.currentPage.is_photos">
+      Test
     </b-container>
     <div
       v-if="currentPage.is_guest_management">
           <GuestManager v-if="$store.state.currentGuest.hasOwnProperty('name')" />
           <GuestFinder v-else />
     </div>
+    <b-container
+      v-if="this.currentPage.is_payments">
+      <Payment />
+    </b-container>
   </section>
 </template>
 
@@ -97,10 +118,14 @@ export default {
     }
   },
   computed: {
+    imgSrcRoot () {
+      return `${process.env.localUrl}/api/`
+    },
     ...mapState({
         currentPage (state) {
           return state.pages[this.slug]
         },
+        carouselPhotos: 'carouselPhotos',
     }),
     slug () {
       return typeof this.$route.params.slug === 'undefined' ? 'home' : this.$route.params.slug

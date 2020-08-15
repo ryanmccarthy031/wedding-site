@@ -1,6 +1,5 @@
 <template>
-    <b-card
-        class="mb-4" >
+    <div>
         <b-card-title
             class="d-flex">
             Comments
@@ -8,7 +7,7 @@
         <client-only placeholder="Loading Text Editor...">
             <vue-editor class="mb-4" :editor-toolbar="customToolbar" v-model="comment"></vue-editor>
         </client-only>
-    </b-card>
+    </div>
     
 </template>
 <script>

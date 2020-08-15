@@ -1,5 +1,5 @@
 <template>
-    <b-card class="mb-4">
+    <div>
         <b-card-title
             class="d-flex">
             Email
@@ -35,7 +35,7 @@
                 </b-input-group-append>
             </b-input-group>
         </div>
-    </b-card>
+    </div>
 </template>
 
 <script>

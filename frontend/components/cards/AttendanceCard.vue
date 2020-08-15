@@ -1,6 +1,5 @@
 <template>
-    <b-card
-        class="mb-4">
+    <div>
         <b-card-title
             class="d-flex">
             Guests
@@ -10,34 +9,35 @@
             <b-row
                 v-for="(person, index) of allGuests"
                 :key="`attendant_input_${index}`">
-                <b-input-group class="mb-2">
-                    <b-form-input
-                        :value="allGuests[index].name"
-                        :state="allGuests[index].on_invitation && !isValid ? false : null"
-                        @input="handleNameChange(person.id, $event, index)"
-                        type="text">
-                    </b-form-input>
-                    <b-input-group-append>
-                        <b-button 
-                            v-if="!allGuests[index].on_invitation"
-                            @click="removeAttending(person.id,index)"
-                            variant="outline-danger">
-                            <b-icon
-                                icon="dash"></b-icon>
-                        </b-button>
-                        <b-button 
-                            v-if="allGuests.length-1===index && index < 4"
-                            @click="addAttending()"
-                            variant="outline-primary">
-                            <b-icon
-                                icon="plus"></b-icon>
-                        </b-button>
-                    </b-input-group-append>
-                </b-input-group>
+                <b-col>
+                    <b-input-group class="mb-2">
+                        <b-form-input
+                            :value="allGuests[index].name"
+                            :state="allGuests[index].on_invitation && !isValid ? false : null"
+                            @input="handleNameChange(person.id, $event, index)"
+                            type="text">
+                        </b-form-input>
+                        <b-input-group-append>
+                            <b-button 
+                                v-if="!allGuests[index].on_invitation"
+                                @click="removeAttending(person.id,index)"
+                                variant="outline-danger">
+                                <b-icon
+                                    icon="dash"></b-icon>
+                            </b-button>
+                            <b-button 
+                                v-if="allGuests.length-1===index && index < 4"
+                                @click="addAttending()"
+                                variant="outline-primary">
+                                <b-icon
+                                    icon="plus"></b-icon>
+                            </b-button>
+                        </b-input-group-append>
+                    </b-input-group>
+                </b-col>
             </b-row>
         </b-form-group>
-
-    </b-card>
+    </div>
 </template>
 
 <script>

@@ -75,14 +75,14 @@
                     </transition>
                 </b-col>
             </b-row>
-        <div class="justify-content-md-center text-center">   
+        <b-row class="pl-4 justify-content-center">   
             <b-button 
                 href="http://www.zola.com/registry/leighandryan2021"
                 variant="outline-primary"
                 target="_blank">
                 Visit Our Registry
             </b-button>
-        </div>
+        </b-row>
     </b-container>
 </template>
 

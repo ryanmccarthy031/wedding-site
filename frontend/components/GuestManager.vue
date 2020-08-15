@@ -11,7 +11,7 @@
       </b-row>
         <b-row>
             <b-col
-                md="5">
+                lg="3">
                 <b-card
                     class="mb-4"
                     title="RSVP">
@@ -25,34 +25,28 @@
                     </b-form-group>
                 </b-card>
             </b-col>
-            <b-col
-                md="7">
-                <AttendanceCard 
-                    ref="attendance"
-                    v-if="guestIsComing" />
-                <div v-else>
-                    <EmailCard ref="email" />
-                    <CommentCard ref="comment" />
-                </div>
+            <b-col lg="9" class="mb-4">
+                <b-card no-body>
+                    <b-tabs card>
+                    <b-tab v-if="!guestIsComing" title="Email" active><EmailCard ref="email" /></b-tab>
+                    <b-tab v-if="guestIsComing" title="Guests" active>
+                        <AttendanceCard 
+                            ref="attendance"
+                            v-if="guestIsComing" />
+                    </b-tab>
+                    <b-tab v-if="guestIsComing" title="Contact Info">
+                        <AddressCard ref="address" />
+                    </b-tab>
+                    <b-tab v-if="guestIsComing" title="Song Requests">
+                        <SongRequestCard ref="song" :guestId="this.guest.id" />
+                    </b-tab>           
+                    <b-tab title="Comments"><CommentCard ref="comment" /></b-tab>
+                    </b-tabs>
+                </b-card>
             </b-col>
         </b-row>
-        <b-row v-if="guestIsComing">
-            <b-col>
-                <AddressCard ref="address" />
-            </b-col>
-        </b-row>
-        <b-row v-if="guestIsComing">
-            <b-col>
-                <SongRequestCard ref="song" :guestId="this.guest.id" />
-            </b-col>
-        </b-row>
-        <b-row v-if="guestIsComing">
-            <b-col>
-                <CommentCard ref="comment"/>
-            </b-col>
-        </b-row> 
-        <b-row class="justify-content-md-center">    
-            <b-col class="text-center">                  
+        <b-row class="justify-content-end text-center">
+            <b-col lg="9">
                 <b-button
                     v-if="!saving"
                     :disabled="saving"
@@ -104,7 +98,6 @@
                     const { phone_number, email, address } = guestAddress
 
                     const attendanceInfo = this.$refs.attendance.processData()
-                    // TODO: put in a toast here
                     if (!attendanceInfo.name) {
                         this.saving=false
                         return this.$bvToast.toast('Did you delete your name? We definitely want to know who\'s coming.', {

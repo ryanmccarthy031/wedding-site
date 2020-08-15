@@ -1,6 +1,5 @@
 <template>
-    <b-card
-        class="mb-4">
+    <div>
         <b-card-title
             class="d-flex">
             Song Requests
@@ -49,7 +48,6 @@
                 <b-col
                     md="7">
                     <client-only placeholder="Loading Text Editor...">
-                        <!-- TODO: Border radius on this text editor to match buttons -->
                         <vue-editor  
                             class="mb-4" 
                             :editor-toolbar="customToolbar" 
@@ -61,7 +59,7 @@
 
         </b-form-group>
 
-    </b-card>
+    </div>
 </template>
 
 <script>

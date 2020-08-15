@@ -5,6 +5,7 @@ export const state = () => ({
     names: [],
     currentGuest: {},
     songs: [],
+    carouselPhotos: [],
 })
 
 export const getters = {}
@@ -20,14 +21,21 @@ export const mutations = {
 export const actions = {
   async nuxtServerInit ({ commit, dispatch }, { req }) {
     const { data } = await axios.get(`${process.env.baseUrl}/framework`)
-    // TODO: I need to figure out how to make a page viewable only either to some users or with a token
-    // TODO: I need some error handling here
 
+    // TODO: I need some error handling here
     const pages = await dispatch('keyObj', { array: data.pages.filter(page=>page.is_included), key: 'slug' })
     await commit('add', { entity: 'pages', data: pages })
 
     const names = data.host_names.map(name=>name.person_name)
     await commit('add', { entity: 'names', data: names })
+
+    const results = await axios.get(`${process.env.baseUrl}/carousel-photos`)
+    await commit('add', { entity: 'carouselPhotos', data: results.data.photos.map(photo=>{
+      return {
+        alternativeText: photo.alternativeText,
+        url: photo.url,
+      }
+    })})
   },
   keyObj ({commit}, { array, key }) {
     const obj = {}

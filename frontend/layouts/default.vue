@@ -18,7 +18,16 @@
             </nav>
         </b-sidebar>
         <div class="toggler-box">
-          <b-navbar-toggle class="toggler position-fixed d-block d-sm-none" target="sidebar"> </b-navbar-toggle>
+
+          <b-navbar-toggle class="toggler position-fixed d-block d-sm-none" target="sidebar">
+            <template v-slot:default="{ expanded }">
+              <button class="hamburger hamburger--squeeze" :class="{ 'is-active': expanded }" type="button">
+                <span class="hamburger-box">
+                  <span class="hamburger-inner"></span>
+                </span>
+              </button>
+            </template>
+          </b-navbar-toggle>
         </div>
     <transition name="slide-fade">  
       <!-- v-if="currentSlug==='home'" -->    
@@ -93,6 +102,7 @@
     computed: {
       ...mapState([
         'pages',
+        'carouselPhotos',
       ]),
       currentSlug () {
         return typeof this.$route.params.slug === 'undefined' ? 'home' : this.$route.params.slug

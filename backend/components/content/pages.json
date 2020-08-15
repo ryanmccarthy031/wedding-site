@@ -34,7 +34,11 @@
       "type": "boolean",
       "default": false
     },
-    "include_payments": {
+    "is_payments": {
+      "type": "boolean",
+      "default": false
+    },
+    "is_photos": {
       "type": "boolean",
       "default": false
     }

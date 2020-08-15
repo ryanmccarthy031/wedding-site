@@ -1,6 +1,5 @@
 <template>
-    <b-card
-    class="mb-4">
+    <div>
         <b-card-title
             class="d-flex">
             Contact Info
@@ -83,7 +82,7 @@
             </b-col>
         </b-row>
   
-    </b-card>
+    </div>
 
 </template>
 
