@@ -21,16 +21,14 @@
 
           <b-navbar-toggle class="toggler position-fixed d-block d-sm-none" target="sidebar">
             <template v-slot:default="{ expanded }">
-              <button class="hamburger hamburger--squeeze" :class="{ 'is-active': expanded }" type="button">
+              <span class="hamburger hamburger--squeeze" :class="{ 'is-active': expanded }" type="button">
                 <span class="hamburger-box">
                   <span class="hamburger-inner"></span>
                 </span>
-              </button>
+              </span>
             </template>
           </b-navbar-toggle>
         </div>
-    <transition name="slide-fade">  
-      <!-- v-if="currentSlug==='home'" -->    
       <b-row class="py-3 justify-content-md-center header">
           <b-col>
             <h1 :class="currentSlug==='home' ? 'home' : 'secondary text-center'">
@@ -53,56 +51,51 @@
             </h1>
           </b-col>
       </b-row>
-    </transition>
 
     <Navbar 
       :pages="pages"
       :currentSlug="currentSlug" />
 
     <main  class="main-content columns pt-2 mt-5 mb-5">
-
       <div class="container column is-10">
         <nuxt />
       </div>
     </main>
-  <footer>
-    <b-row class="justify-content-center">
-      <b-col cols="8" md="6" lg="4">
-        <b-img fluid src="/footer.png" />
-      </b-col>
-    </b-row>
-  </footer>
+  <Footer />
   </div>
 </template>
 <script>
   import { mapState } from 'vuex'
+  import Footer from '~/components/Footer'
 
   export default {
-    mounted () {
-        let scrolled = false
+    // mounted () {
+    //     let scrolled = false
 
-        /* Bind the scroll Event */
-        window.addEventListener('scroll', function(e) {
-            scrolled = true
-        });
-        const that = this
-        let timeout = setInterval(function() {
-            /* If the page was scrolled, handle the scroll */
-            if (scrolled) {
-                scrolled = false
+    //     /* Bind the scroll Event */
+    //     window.addEventListener('scroll', function(e) {
+    //         scrolled = true
+    //     });
+    //     const that = this
+    //     let timeout = setInterval(function() {
+    //         /* If the page was scrolled, handle the scroll */
+    //         if (scrolled) {
+    //             scrolled = false
 
-                if (that.$children[2].$el.getBoundingClientRect().y<5) {
-                    that.stuck=true
-                } else {
-                    that.stuck=false
-                }
-            }
-        }, 200);
+    //             if (that.$children[2].$el.getBoundingClientRect().y<5) {
+    //                 that.stuck=true
+    //             } else {
+    //                 that.stuck=false
+    //             }
+    //         }
+    //     }, 200);
+    // },
+    components: {
+      Footer,
     },
     computed: {
       ...mapState([
         'pages',
-        'carouselPhotos',
       ]),
       currentSlug () {
         return typeof this.$route.params.slug === 'undefined' ? 'home' : this.$route.params.slug
@@ -115,19 +108,3 @@
     },
   }
 </script>
-<style>
-
-
-/* Enter and leave animations can use different */
-/* durations and timing functions.              */
-.slide-fade-enter-active {
-  transition: all .3s ease-out;
-}
-.slide-fade-leave-active {
-  transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-}
-.slide-fade-enter, .slide-fade-leave-to
-/* .slide-fade-leave-active below version 2.1.8 */ {
-  transform: translateY(-300px);
-}
-</style>

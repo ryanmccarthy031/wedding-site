@@ -80,7 +80,7 @@
     </b-container>
     <b-container
       v-if="this.currentPage.is_photos">
-      Test
+      <Photos />
     </b-container>
     <div
       v-if="currentPage.is_guest_management">
@@ -100,6 +100,7 @@ import GuestFinder from '~/components/GuestFinder'
 import GuestManager from '~/components/GuestManager'
 import Payment from '~/components/Payment'
 import Map from '~/components/Map'
+import Photos from '~/components/Photos'
 import { mapState } from 'vuex'
 
 export default {
@@ -167,6 +168,7 @@ export default {
     GuestManager,
     Map,
     Payment,
+    Photos,
   }
 }
 </script>

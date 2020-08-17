@@ -67,11 +67,11 @@
 </template>
 
 <script>
-    import AttendanceCard from '~/components/cards/AttendanceCard'
-    import SongRequestCard from '~/components/cards/SongRequestCard'
-    import CommentCard from '~/components/cards/CommentCard'
-    import AddressCard from '~/components/cards/AddressCard'
-    import EmailCard from '~/components/cards/EmailCard'
+    import AttendanceCard from '~/components/tabs/AttendanceCard'
+    import SongRequestCard from '~/components/tabs/SongRequestCard'
+    import CommentCard from '~/components/tabs/CommentCard'
+    import AddressCard from '~/components/tabs/AddressCard'
+    import EmailCard from '~/components/tabs/EmailCard'
 
     export default {
                 data() {

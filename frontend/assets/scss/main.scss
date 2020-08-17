@@ -128,12 +128,27 @@ nav {
 .thanks {
     min-height: 100px;
 }
+.gallery .card {
+    min-height: 219px;
+    max-width: 219px;
+    margin: auto;
+    img {
+        min-height: 219px;
+        object-fit: cover;
+    }
+}
 @media (min-width: 576px) {
     h1.secondary div {
         display: inline
     }
     .payment {
         min-height: 285px;
+    }
+    .gallery .card {
+        min-height: auto;
+        img {
+            min-height: auto;
+        }
     }
 }
 
@@ -217,7 +232,17 @@ h2::after {
 .ql-container {
     font-family: $font-family-serif !important;
 }
-
+.modal-body, .modal-header, .modal-footer {
+    background-color: $body-color;
+}
+.modal-header, .modal-footer {
+    display: none !important    ;
+}
+.modal-body .img-fluid {
+    max-height:80vh;
+    width: auto !important;
+    margin: auto;
+}
 /*!
  * Hamburgers
  * @description Tasty CSS-animated hamburgers
@@ -374,7 +399,6 @@ $hamburger-active-hover-filter: $hamburger-hover-filter !default;
       }
     }
   }
-
 // Bootstrap and its default variables
 @import '../../node_modules/bootstrap/scss/bootstrap';
 // BootstrapVue and its default variables
