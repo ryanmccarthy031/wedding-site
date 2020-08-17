@@ -19,7 +19,6 @@ services:
             - ./backend:/srv/app
         ports:
             - "1337:1337"
-
     db:
         image: mongo:4.2
         container_name: db
