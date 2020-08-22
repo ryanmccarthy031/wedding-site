@@ -1,4 +1,4 @@
-# wedding-frontend
+# Wedding Site Backend
 
 ## Build Setup
 
