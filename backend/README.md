@@ -1,3 +1,3 @@
-# Strapi application
+# Wedding Site Backend
 
-A quick description of your strapi application
+A Strapi backend for the wedding site.
