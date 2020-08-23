@@ -1,23 +1,13 @@
 module.exports = ({ env }) => ({
-  defaultConnection: "default",
+  defaultConnection: 'default',
   connections: {
     default: {
-      connector: "mongoose",
+      connector: 'mongoose',
       settings: {
-        uri: env("DATABASE_URI"),
-        ssl: { rejectUnauthorized: false }
+        uri: env('DATABASE_URI'),
       },
       options: {
-        ssl: false,
-        authenticationDatabase: "",
-        useUnifiedTopology: true,
-        pool: {
-          min: 0,
-          max: 10,
-          idleTimeoutMillis: 30000,
-          createTimeoutMillis: 30000,
-          acquireTimeoutMillis: 30000
-        }
+        ssl: true,
       },
     },
   },
