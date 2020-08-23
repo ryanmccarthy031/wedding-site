@@ -12,7 +12,7 @@
   publish = "dist/"
 
   # Default build command.
-  command = "yarn generate"
+  command = "yarn build"
 
 [context.branch-deploy.environment]
   NODE_ENV = "production"
