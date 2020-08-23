@@ -126,4 +126,7 @@ export default {
   */
   build: {
   },
+  generate: {
+    fallback: true
+  }
 }
