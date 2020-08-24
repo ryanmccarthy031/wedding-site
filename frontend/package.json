@@ -13,6 +13,7 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.11.0",
     "@nuxtjs/markdownit": "^1.2.9",
+    "@nuxtjs/moment": "^1.6.1",
     "@nuxtjs/proxy": "^2.0.0",
     "bootstrap-vue": "^2.15.0",
     "cookieparser": "^0.1.0",
@@ -28,7 +29,6 @@
     "vue2-editor": "^2.10.2"
   },
   "devDependencies": {
-    "@nuxtjs/moment": "^1.6.1",
     "sass-loader": "^8.0.2"
   }
 }
