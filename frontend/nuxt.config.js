@@ -17,8 +17,8 @@ export default {
     baseName: process.env.BASE_NAME || 'localhost',
     protocol: process.env.PROTOCOL || 'http://',
     backendPort: process.env.BACKEND_PORT || '80',
-    baseUrl: `${process.env.PROTOCOL || 'http://'}${process.env.BASE_NAME || 'localhost'}:${process.env.BACKEND_PORT||'80'}`,
-    localUrl: `${process.env.PROTOCOL || 'http://'}${process.env.LOCAL_URL || 'localhost'}:${process.env.LOCAL_PORT||'80'}`,
+    baseUrl: `${process.env.PROTOCOL || 'http://'}${process.env.BASE_NAME || 'localhost'}`,
+    localUrl: `${process.env.PROTOCOL || 'http://'}${process.env.LOCAL_URL || 'localhost'}`,
     stripePublicKey: `${process.env.STRIPE_PUBLIC_KEY}`,
   },
   /*
