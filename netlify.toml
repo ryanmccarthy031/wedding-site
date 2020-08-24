@@ -13,7 +13,3 @@
 
   # Default build command.
   command = "yarn generate"
-
-[context.production.environment]
-  NODE_ENV = "production"
-
