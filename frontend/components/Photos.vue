@@ -100,7 +100,7 @@
                 return false
             },
             imgSrcRoot () {
-            return `${process.env.localUrl}/api/`
+            return `${process.env.localUrl}/api`
             },
             unchunkedList () {
                 const unchunked = []
@@ -153,7 +153,6 @@
                         if (result.data.length) {
                             this.page++
                             const photoArray = result.data[0].Photos.map(photo=>{
-                                console.log(photo)
                                 return {
                                     alt: photo.alternativeText,
                                     src: `${this.imgSrcRoot}${photo.formats.large.url}`,
