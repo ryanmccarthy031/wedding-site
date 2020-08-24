@@ -24,10 +24,12 @@ export const mutations = {
 export const actions = {
   async nuxtServerInit ({ commit, dispatch }, { req }) {
     // TODO: I need some error handling here
-    
+    console.log(process.env.baseUrl)
+
     // Get framework for the whole site.
     const { data } = await axios.get(`${process.env.baseUrl}/framework`)
-
+    console.log("!!!!!!!!!!!!!!!!!")
+    console.log(data)
     // Extract the pages from the framework
     const pages = await dispatch('keyObj', { array: data.pages.filter(page=>page.is_included), key: 'slug' })
     await commit('add', { entity: 'pages', data: pages })
